@@ -18,9 +18,11 @@ func Solve() {
 func part1(input []byte) int {
 	idSum := 0
 	var (
-		bagRed, bagGreen, bagBlue byte = 12, 13, 14
-		num, id, red, blue, green byte
+		red, green, blue byte = 12, 13, 14
+
+		num, id byte
 	)
+	possible := true
 	for i := 0; i < len(input); i++ {
 		c := input[i]
 		switch c {
@@ -30,33 +32,25 @@ func part1(input []byte) int {
 			id = num
 			num = 0
 		case 'r':
-			red = num
+			possible = num <= red
 			num = 0
 			i += 2
 		case 'g':
-			green = num
+			possible = num <= green
 			num = 0
 			i += 4
 		case 'b':
-			blue = num
+			possible = num <= blue
 			num = 0
 			i += 3
-		case ';', '\n':
-			// log.Printf("id: %d: R %d, G %d, B %d", id, red, green, blue)
-			if bagRed < red || bagGreen < green || bagBlue < blue {
-				// log.Printf("Not possible, skipping to next game")
-				for input[i] != '\n' {
-					i++
-				}
-				red, blue, green = 0, 0, 0
-				break
+		case '\n':
+			idSum += int(id)
+		}
+		if !possible {
+			for input[i] != '\n' {
+				i++
 			}
-			if c == '\n' {
-				// log.Printf("Adding %d", id)
-				idSum += int(id)
-			}
-			// always reset
-			red, blue, green = 0, 0, 0
+			possible = true
 		}
 	}
 	return idSum
